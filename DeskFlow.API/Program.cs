@@ -17,11 +17,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
+        
 builder.Services.AddScoped<CategoriaRepository>();
 builder.Services.AddScoped<CategoriaService>();
 
 builder.Services.AddScoped<ChamadoRepository>();
 builder.Services.AddScoped<ChamadoService>();
+
+builder.Services.AddScoped<InteracaoRepository>();
+builder.Services.AddScoped<InteracaoService>();
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

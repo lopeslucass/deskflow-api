@@ -1,6 +1,8 @@
 using DeskFlow.API.Models.DTOs;
+using DeskFlow.API.Models.Entidades;
 using DeskFlow.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using DeskFlow.API.Models.Enums;
 
 namespace DeskFlow.API.Controllers;
 
@@ -9,10 +11,26 @@ namespace DeskFlow.API.Controllers;
 public class ChamadosController : ControllerBase
 {
     private readonly ChamadoService _service;
+    private readonly InteracaoService _interacaoService;
 
-    public ChamadosController(ChamadoService service)
+    public ChamadosController(ChamadoService service, InteracaoService interacaoService)
     {
         _service = service;
+        _interacaoService = interacaoService;
+    }
+
+    [HttpPost("{id}/interacoes")]
+    public async Task<IActionResult> AdicionarInteracao(int id, CriarInteracaoDto dto)
+    {
+        var interacao = await _interacaoService.AdicionarAsync(id, dto);
+        var resposta = new InteracaoRespostaDto
+        {
+            Id = interacao.Id,
+            Autor = interacao.Autor,
+            Mensagem = interacao.Mensagem,
+            DataRegistro = interacao.DataRegistro
+        };
+        return StatusCode(StatusCodes.Status201Created, resposta);
     }
 
     [HttpPost]
@@ -91,5 +109,31 @@ public class ChamadosController : ControllerBase
     {
         await _service.FecharAsync(id, dto.Solucao);
         return NoContent();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Listar(
+        [FromQuery] StatusChamado? status,
+        [FromQuery] Prioridade? prioridade,
+        [FromQuery] int? categoriaId)
+    {
+        var chamados = await _service.ListarAsync(status, prioridade, categoriaId);
+
+        var resposta = chamados.Select(chamado => new ChamadoRespostaDto
+        {
+            Id = chamado.Id,
+            Titulo = chamado.Titulo,
+            Descricao = chamado.Descricao,
+            Prioridade = chamado.Prioridade,
+            Status = chamado.Status,
+            SolicitanteNome = chamado.SolicitanteNome,
+            DataAbertura = chamado.DataAbertura,
+            DataFechamento = chamado.DataFechamento,
+            Solucao = chamado.Solucao,
+            CategoriaId = chamado.CategoriaId,
+            CategoriaNome = chamado.Categoria.Nome
+        }).ToList();
+
+        return Ok(resposta);
     }
 }

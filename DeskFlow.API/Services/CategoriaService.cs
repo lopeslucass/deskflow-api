@@ -1,5 +1,6 @@
 using DeskFlow.API.Models.Entidades;
 using DeskFlow.API.Repositories;
+using DeskFlow.API.Exceptions;
 
 namespace DeskFlow.API.Services;
 
@@ -60,7 +61,7 @@ public class CategoriaService
         var possuiChamados = await _repository.PossuiChamadosAsync(id);
         if (possuiChamados)
         {
-            throw new InvalidOperationException("Não é possível excluir uma categoria que possui chamados vinculados.");
+            throw new BusinessConflictException("Não é possível excluir uma categoria que possui chamados vinculados.");
         }
         await _repository.ExcluirAsync(categoria);
     }

@@ -1,3 +1,5 @@
+using DeskFlow.API.Exceptions;
+
 namespace DeskFlow.API.Middlewares;
 
 public class ExceptionHandlingMiddleware
@@ -30,7 +32,7 @@ public class ExceptionHandlingMiddleware
         {
             ArgumentException => StatusCodes.Status400BadRequest,
             KeyNotFoundException => StatusCodes.Status404NotFound,
-            InvalidOperationException => StatusCodes.Status409Conflict,
+            BusinessConflictException => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };
 

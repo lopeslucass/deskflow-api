@@ -2,6 +2,7 @@ using DeskFlow.API.Models.Entidades;
 using DeskFlow.API.Models.Enums;
 using DeskFlow.API.Repositories;
 using DeskFlow.API.Models.DTOs;
+using DeskFlow.API.Exceptions;
 
 namespace DeskFlow.API.Services;
 
@@ -67,7 +68,7 @@ public class ChamadoService
 
         if (chamado.Status != StatusChamado.Aberto)
         {
-            throw new InvalidOperationException("Somente chamados aberto podem ser iniciados.");
+            throw new BusinessConflictException("Somente chamados aberto podem ser iniciados.");
         }
 
         chamado.Status = StatusChamado.EmAndamento;
@@ -85,7 +86,7 @@ public class ChamadoService
 
         if (chamado.Status == StatusChamado.Fechado)
         {
-            throw new InvalidOperationException("O chamado já está fechado.");
+            throw new BusinessConflictException("O chamado já está fechado.");
         }
 
         if (string.IsNullOrWhiteSpace(solucao))
@@ -103,5 +104,10 @@ public class ChamadoService
     public async Task<Chamado?> BuscarPorIdAsync(int id)
     {
         return await _chamadoRepository.BuscarPorIdAsync(id);
+    }
+
+    public async Task<List<Chamado>> ListarAsync(StatusChamado? status, Prioridade? prioridade,int? categoriaId)
+    {
+        return await _chamadoRepository.ListarAsync(status, prioridade, categoriaId);
     }
 }
