@@ -17,6 +17,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception exception)
         {
+            Console.WriteLine(exception);
             await TratarExcecaoAsync(context, exception);
         }
     }

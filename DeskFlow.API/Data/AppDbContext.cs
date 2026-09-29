@@ -12,5 +12,14 @@ public class AppDbContext : DbContext
     public DbSet<Categoria> Categorias {get; set;}
     public DbSet<Chamado> Chamados {get; set;}
     public DbSet<Interacao> Interacoes {get; set;}
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Chamado>()
+            .HasOne(chamado => chamado.Categoria)
+            .WithMany(categoria => categoria.Chamados)
+            .HasForeignKey(chamado => chamado.CategoriaId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
     
 }
