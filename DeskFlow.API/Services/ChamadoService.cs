@@ -68,7 +68,7 @@ public class ChamadoService
 
         if (chamado.Status != StatusChamado.Aberto)
         {
-            throw new BusinessConflictException("Somente chamados aberto podem ser iniciados.");
+            throw new BusinessConflictException("Somente chamados abertos podem ser iniciados.");
         }
 
         chamado.Status = StatusChamado.EmAndamento;
